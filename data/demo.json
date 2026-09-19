@@ -1,0 +1,24 @@
+{
+  "job": {
+    "id": "JOB-1001",
+    "title": "GenAI Entwickler/Integrator (m/w/d)",
+    "department": "BMT Business meets Technology Consulting AG",
+    "location": "Bottighofen, Schweiz",
+    "requirements": [
+      {"label": "API- und Systemintegration", "required": true},
+      {"label": "Python", "required": true},
+      {"label": "GenAI- und LLM-APIs", "required": true},
+      {"label": "SAP- oder ERP-Erfahrung", "required": false},
+      {"label": "Cloud-Dienste", "required": false},
+      {"label": "OAuth und API-Sicherheit", "required": false}
+    ]
+  },
+  "candidate": {
+    "id": "CAND-2048",
+    "name": "Anna Keller",
+    "headline": "Integration Engineer · Python · Generative AI",
+    "experience": "6 Jahre Erfahrung in API-Integration, Python und Cloud-Automatisierung",
+    "skills": ["Python", "REST", "OAuth2", "Azure", "OpenAI API", "SAP S/4HANA", "FastAPI"],
+    "summary": "Anna hat Integrationsplattformen für ERP- und CRM-Prozesse entwickelt und zuletzt einen sicheren LLM-Service für interne Wissenssuche umgesetzt."
+  }
+}
