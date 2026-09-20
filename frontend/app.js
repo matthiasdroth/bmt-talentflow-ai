@@ -24,7 +24,7 @@ function renderDocuments(documents, filename) {
     return;
   }
   container.classList.remove('hidden');
-  container.innerHTML = `<div class="documents-title"><strong>Erkannte Dokumente</strong><span>${escapeHtml(filename || 'Bewerbungsunterlagen')} · ${documents.length} Bereiche</span></div>${documents.map((document, index) => `<details class="document-card" ${index === 0 ? 'open' : ''}><summary><span class="document-type">${escapeHtml(document.type)}</span><span class="document-chevron">⌄</span></summary><pre>${escapeHtml(cleanExtractedText(document.text))}</pre></details>`).join('')}`;
+  container.innerHTML = `<div class="documents-title"><strong>Erkannte Dokumente</strong><span>${escapeHtml(filename || 'Bewerbungsunterlagen')} · ${documents.length} Bereiche</span></div>${documents.map((document, index) => `<details class="document-card" ${index === 0 ? 'open' : ''}><summary><span class="document-type">${escapeHtml(document.type)}</span><span class="document-chevron" aria-hidden="true"></span></summary><pre>${escapeHtml(cleanExtractedText(document.text))}</pre></details>`).join('')}`;
 }
 
 function updateCandidateIdentity(name) {
