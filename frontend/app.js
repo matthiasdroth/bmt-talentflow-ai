@@ -23,8 +23,16 @@ function renderDocuments(documents, filename) {
     container.classList.add('hidden');
     return;
   }
+  const card = (document, index) => `<details class="document-card" ${index === 0 ? 'open' : ''}><summary><span class="document-type">${escapeHtml(document.type)}</span><span class="document-chevron" aria-hidden="true"></span></summary><pre>${escapeHtml(cleanExtractedText(document.text))}</pre></details>`;
+  const regularDocuments = documents.filter(document => !document.type.startsWith('Arbeitszeugnis') && document.type !== 'Weitere Zeugnisse');
+  const workReferences = documents.filter(document => document.type.startsWith('Arbeitszeugnis'));
+  const educationReferences = documents.filter(document => document.type === 'Weitere Zeugnisse');
+  const sections = regularDocuments.map((document, index) => card(document, index)).join('');
+  const certificates = workReferences.length || educationReferences.length
+    ? `<div class="document-group"><div class="document-group-title">Zeugnisse</div>${workReferences.length ? `<div class="document-subgroup">Arbeitszeugnisse</div>${workReferences.map((document, index) => card(document, index)).join('')}` : ''}${educationReferences.length ? `<div class="document-subgroup">Ausbildungszeugnisse</div>${educationReferences.map((document, index) => card(document, index)).join('')}` : ''}</div>`
+    : '';
   container.classList.remove('hidden');
-  container.innerHTML = `<div class="documents-title"><strong>Erkannte Dokumente</strong><span>${escapeHtml(filename || 'Bewerbungsunterlagen')} · ${documents.length} Bereiche</span></div>${documents.map((document, index) => `<details class="document-card" ${index === 0 ? 'open' : ''}><summary><span class="document-type">${escapeHtml(document.type)}</span><span class="document-chevron" aria-hidden="true"></span></summary><pre>${escapeHtml(cleanExtractedText(document.text))}</pre></details>`).join('')}`;
+  container.innerHTML = `<div class="documents-title"><strong>Erkannte Dokumente</strong><span>${escapeHtml(filename || 'Bewerbungsunterlagen')} · ${documents.length} Bereiche</span></div>${sections}${certificates}`;
 }
 
 function updateCandidateIdentity(name) {
@@ -73,7 +81,7 @@ $('resume').addEventListener('change', async (event) => {
   const file = event.target.files[0];
   if (!file) return;
   const status = $('upload-status');
-  status.classList.remove('hidden', 'error', 'success');
+  status.classList.remove('hidden', 'error', 'success', 'ocr-warning');
   status.textContent = `${file.name} wird gelesen …`;
   const form = new FormData();
   form.append('file', file);
@@ -84,8 +92,11 @@ $('resume').addEventListener('change', async (event) => {
     const cleanedText = cleanExtractedText(data.text || data.preview);
     uploadedDocument = {...data, text: cleanedText, documents: data.documents?.map(document => ({...document, text: cleanExtractedText(document.text)}))};
     updateCandidateIdentity(data.candidate_name);
-    status.classList.add('success');
-    status.textContent = data.message;
+    status.classList.add(data.ocr?.pages ? 'ocr-warning' : 'success');
+    const ocrNote = data.ocr?.pages
+      ? ` ${data.ocr.pages} Seite(n) wurden per OCR gelesen${data.ocr.confidence ? ` (durchschnittliche Qualität: ${data.ocr.confidence} %)` : ''}. Bitte diese Seiten kurz prüfen.`
+      : '';
+    status.textContent = `${data.message}${ocrNote}`;
     renderDocuments(uploadedDocument.documents, data.filename);
   } catch (error) {
     status.classList.add('error');
